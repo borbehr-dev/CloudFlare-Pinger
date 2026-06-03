@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 
-// Импортируем оба JSON-файла напрямую — теперь это работает нативно!
+// Импортируем JSON-файлы конфигурации
 import listJson from './list.json'
 import config from './config.json'
 
@@ -22,7 +22,7 @@ const HTML_TEMPLATE = `
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>\${config.settings.app_name}</title>
+    <title>${config.settings.app_name}</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -145,7 +145,7 @@ const HTML_TEMPLATE = `
 <body>
     <div class="container">
         <div class="header">
-            <h1><i class="fas fa-heartbeat"></i> \${config.settings.app_name}</h1>
+            <h1><i class="fas fa-heartbeat"></i> ${config.settings.app_name}</h1>
             <p>Мониторинг доступности ресурсов в реальном времени</p>
         </div>
 
@@ -159,7 +159,7 @@ const HTML_TEMPLATE = `
         <div class="websites-list">
             <div class="list-header">
                 <h2><i class="fas fa-list"></i> Наблюдаемые ресурсы</h2>
-                \${config.settings.allow_manual_check ? `
+                ${config.settings.allow_manual_check ? `
                 <button class="btn" id="checkBtn" onclick="checkAllNow()">
                     <i class="fas fa-sync-alt"></i> Проверить сейчас
                 </button>` : ''}
@@ -174,7 +174,7 @@ const HTML_TEMPLATE = `
 
     <script>
         document.addEventListener('DOMContentLoaded', loadData);
-        setInterval(loadData, 20000); // автообновление UI каждые 20 секунд
+        setInterval(loadData, 20000);
 
         async function loadData() {
             try {
@@ -186,38 +186,41 @@ const HTML_TEMPLATE = `
 
         function render(sites) {
             const total = sites.length;
-            const up = sites.filter(s => s.status === 'up').length;
-            const down = sites.filter(s => s.status === 'down').length;
-            const avg = total > 0 ? (sites.reduce((acc, s) => acc + s.uptime, 0) / total).toFixed(2) : 100;
+            const up = sites.filter(function(s) { return s.status === 'up' }).length;
+            const down = sites.filter(function(s) { return s.status === 'down' }).length;
+            const avg = total > 0 ? (sites.reduce(function(acc, s) { return acc + s.uptime }, 0) / total).toFixed(2) : 100;
 
             document.getElementById('totalSites').textContent = total;
             document.getElementById('upSites').textContent = up;
             document.getElementById('downSites').textContent = down;
             document.getElementById('avgUptime').textContent = avg + '%';
 
-            document.getElementById('container').innerHTML = sites.map(s => \`
-                <div class="website-card \${s.status}">
-                    <div class="card-top">
-                        <div>
-                            <div class="site-name">\${s.name}</div>
-                            <a href="\${s.url}" target="_blank" class="site-url">\${s.url}</a>
-                        </div>
-                        <span class="badge \${s.status}">
-                            \${s.status === 'up' ? 'ДОСТУПЕН' : s.status === 'down' ? 'УПАЛ' : 'ОЖИДАНИЕ'}
-                        </span>
-                    </div>
-                    <div class="progress-bar"><div class="progress-fill" style="width: \${s.uptime}%"></div></div>
-                    <div class="card-stats">
-                        <div class="card-stat-box"><div class="stat-val">\${s.uptime}%</div><div class="stat-lbl">Аптайм</div></div>
-                        <div class="card-stat-box"><div class="stat-val">\${s.response_time} мс</div><div class="stat-lbl">Отклик</div></div>
-                        <div class="card-stat-box"><div class="stat-val">\${formatTime(s.last_checked)}</div><div class="stat-lbl">Проверен</div></div>
-                    </div>
-                </div>
-            \`).join('');
+            var html = '';
+            for (var i = 0; i < sites.length; i++) {
+                var s = sites[i];
+                var statusText = s.status === 'up' ? 'ДОСТУПЕН' : (s.status === 'down' ? 'УПАЛ' : 'ОЖИДАНИЕ');
+                
+                html += '<div class="website-card ' + s.status + '">' +
+                    '<div class="card-top">' +
+                        '<div>' +
+                            '<div class="site-name">' + s.name + '</div>' +
+                            '<a href="' + s.url + '" target="_blank" class="site-url">' + s.url + '</a>' +
+                        '</div>' +
+                        '<span class="badge ' + s.status + '">' + statusText + '</span>' +
+                    '</div>' +
+                    '<div class="progress-bar"><div class="progress-fill" style="width: ' + s.uptime + '%"></div></div>' +
+                    '<div class="card-stats">' +
+                        '<div class="card-stat-box"><div class="stat-val">' + s.uptime + '%</div><div class="stat-lbl">Аптайм</div></div>' +
+                        '<div class="card-stat-box"><div class="stat-val">' + s.response_time + ' мс</div><div class="stat-lbl">Отклик</div></div>' +
+                        '<div class="card-stat-box"><div class="stat-val">' + formatTime(s.last_checked) + '</div><div class="stat-lbl">Проверен</div></div>' +
+                    '</div>' +
+                '</div>';
+            }
+            document.getElementById('container').innerHTML = html;
         }
 
         async function checkAllNow() {
-            const btn = document.getElementById('checkBtn');
+            var btn = document.getElementById('checkBtn');
             if(!btn) return;
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Сканирую...';
@@ -229,11 +232,11 @@ const HTML_TEMPLATE = `
 
         function formatTime(timeStr) {
             if (timeStr === 'Ни разу' || !timeStr) return 'Ни разу';
-            const diff = Math.floor((new Date() - new Date(timeStr)) / 1000);
+            var diff = Math.floor((new Date() - new Date(timeStr)) / 1000);
             if (diff < 15) return 'Только что';
-            if (diff < 60) return \`\${diff} сек. назад\`;
-            if (diff < 3600) return \`\${Math.floor(diff / 60)} мин. назад\`;
-            return \`\${Math.floor(diff / 3600)} ч. назад\`;
+            if (diff < 60) return diff + ' сек. назад';
+            if (diff < 3600) return Math.floor(diff / 60) + ' мин. назад';
+            return Math.floor(diff / 3600) + ' ч. назад';
         }
     </script>
 </body>
