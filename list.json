@@ -1,12 +1,12 @@
 [
   {
     "id": 1,
-    "name": "Google",
-    "url": "https://www.google.com"
+    "name": "borBeHR - основной сайт",
+    "url": "https://borbehr.eu.org"
   },
   {
     "id": 2,
-    "name": "Яндекс",
-    "url": "https://ya.ru"
+    "name": "Мониторинг",
+    "url": "https://status.borbehr.eu.org"
   }
 ]
