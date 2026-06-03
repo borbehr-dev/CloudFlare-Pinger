@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "name": "Google",
+    "url": "https://www.google.com"
+  },
+  {
+    "id": 2,
+    "name": "Яндекс",
+    "url": "https://ya.ru"
+  }
+]

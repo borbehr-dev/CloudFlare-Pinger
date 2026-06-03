@@ -1,0 +1,9 @@
+name = "pinger"
+main = "pinger.js"
+compatibility_date = "2026-06-03"
+
+# Вместо node_compat используем официальный флаг совместимости
+compatibility_flags = [ "nodejs_compat" ]
+
+[triggers]
+crons = ["*/5 * * * *"]
