@@ -1,6 +1,6 @@
 {
   "settings": {
-    "app_name": "Мониторинг Pinger",
+    "app_name": "borBeHR Status",
     "allow_manual_check": true,
     "fetch_timeout_ms": 5000
   }
