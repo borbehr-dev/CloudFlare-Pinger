@@ -22,7 +22,7 @@
 git clone https://github.com/borbehr-dev/CloudFlare-Pinger.git
 cd CloudFlare-Pinger
 npm install
-
+```
 
 ### 2. Настройка списков ресурсов
 
@@ -64,7 +64,7 @@ npm run dev
 ```bash
 npx wrangler login
 npm run deploy
-
+```
 
 ## 🛠 Технологический стек
 
