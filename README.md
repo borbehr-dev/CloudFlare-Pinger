@@ -1,5 +1,7 @@
 # ⚡️ CloudFlare-Pinger
 
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/borbehr-dev/CloudFlare-Pinger)
+
 Легковесный, адаптивный и полностью бесплатный сервис мониторинга доступности сайтов (Uptime Robot), работающий на технологиях **Cloudflare Workers** и **Hono**. 
 
 Проект не требует серверов, баз данных и разворачивается за 1 минуту прямо в бессерверное облако Cloudflare Edge.
